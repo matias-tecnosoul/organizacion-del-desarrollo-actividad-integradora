@@ -1,0 +1,28 @@
+{
+  "name": "actividad-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "schema.test.js",
+  "scripts": {
+    "test": "jest --detectOpenHandles",
+    "lint": "eslint *.js",
+    "lint:fix": "eslint *.js --fix",
+    "devcontainers:start": "devcontainer build --workspace-folder .",
+    "devcontainers:shell": "devcontainer exec --workspace-folder . -- bash"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dbmate": "^2.11.0",
+    "jest": "^29.7.0",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@devcontainers/cli": "^0.57.0",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1"
+  }
+}

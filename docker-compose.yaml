@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  postgresql:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: tdd_database
+      POSTGRES_USER: tdd_database
+      POSTGRES_PASSWORD: tdd_database
+    ports:
+      - 5432:5432
