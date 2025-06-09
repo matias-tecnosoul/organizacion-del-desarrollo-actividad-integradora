@@ -26,6 +26,35 @@ table "users" {
     null = false
     type = character_varying(30)
   }
+  
+  # Nuevos campos
+  column "updated_at" {
+    null    = true
+    type    = timestamptz
+    default = null
+  }
+  column "first_name" {
+    null = true
+    type = character_varying(50)
+  }
+  column "last_name" {
+    null = true
+    type = character_varying(50)
+  }
+  column "password" {
+    null = true
+    type = character_varying(100)
+  }
+  column "enabled" {
+    null    = false
+    type    = boolean
+    default = true
+  }
+  column "last_access_time" {
+    null = true
+    type = timestamptz
+  }
+  
   primary_key {
     columns = [column.email]
   }
