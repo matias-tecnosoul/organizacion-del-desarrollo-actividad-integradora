@@ -2,6 +2,7 @@ env:
   browser: true
   commonjs: true
   es2021: true
+  jest: true  # Añadir esta línea para reconocer las funciones de Jest
 #extends: standard
 extends: airbnb-base
 parserOptions:
