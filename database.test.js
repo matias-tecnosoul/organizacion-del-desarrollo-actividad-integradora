@@ -27,6 +27,8 @@ describe('Test database', () => {
       connectionString: process.env.DATABASE_URL,
     });
     await client.connect();
+    // CAMBIO 1: Configurar timezone a UTC para consistencia
+    await client.query("SET timezone = 'UTC'");
   });
 
   /**
@@ -222,16 +224,19 @@ describe('Test database', () => {
 
       test('should handle far future dates for updated_at', async () => {
         await insertBaseUser();
+        // CAMBIO 2: Fecha explícita con timezone UTC
 
         // Fecha en el futuro lejano: 31 de diciembre de 9999
-        const result = await updateUser('test@example.com', { updated_at: '9999-12-31 23:59:59' });
+        const result = await updateUser('test@example.com', { updated_at: '9999-12-31 23:59:59+00' }); // Mediodía UTC explícito
 
         // Verificar que la fecha se guardó correctamente
         expect(result.rows[0].updated_at).not.toBeNull();
         const storedDate = new Date(result.rows[0].updated_at);
-        expect(storedDate.getFullYear()).toBe(9999);
-        expect(storedDate.getMonth()).toBe(11); // Diciembre es 11 en JavaScript
-        expect(storedDate.getDate()).toBe(31);
+        expect(storedDate.getUTCFullYear()).toBe(9999);
+        expect(storedDate.getUTCMonth()).toBe(11);
+        expect(storedDate.getUTCDate()).toBe(31);
+        expect(storedDate.getUTCHours()).toBe(23); //  Verificar la hora también
+        expect(storedDate.getUTCMinutes()).toBe(59);
       });
     });
 
@@ -378,15 +383,15 @@ describe('Test database', () => {
 
         // Fecha en el pasado lejano: 1 de enero de 1900
         const result = await updateUser('test@example.com', {
-          last_access_time: '1900-01-01 00:00:00',
+          last_access_time: '1900-01-01 00:00:00+00',
         });
 
         // Verificar que la fecha se guardó correctamente
         expect(result.rows[0].last_access_time).not.toBeNull();
         const storedDate = new Date(result.rows[0].last_access_time);
-        expect(storedDate.getFullYear()).toBe(1900);
-        expect(storedDate.getMonth()).toBe(0); // Enero es 0 en JavaScript
-        expect(storedDate.getDate()).toBe(1);
+        expect(storedDate.getUTCFullYear()).toBe(1900);
+        expect(storedDate.getUTCMonth()).toBe(0); // Enero es 0
+        expect(storedDate.getUTCDate()).toBe(1);
       });
     });
 
