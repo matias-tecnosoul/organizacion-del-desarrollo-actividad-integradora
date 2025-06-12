@@ -196,7 +196,7 @@ describe('Test database', () => {
       test('should allow setting updated_at to current timestamp', async () => {
         // Insertar usuario base
         await insertBaseUser();
-        
+
         // Actualizar updated_at a now()
         const result = await client.query(
           `UPDATE users 
@@ -204,7 +204,7 @@ describe('Test database', () => {
            WHERE email = 'test@example.com' 
            RETURNING *`,
         );
-        
+
         // Verificar que updated_at no es null
         expect(result.rows[0].updated_at).not.toBeNull();
       });
@@ -212,20 +212,20 @@ describe('Test database', () => {
       test('should allow setting updated_at to NULL', async () => {
         // Insertar usuario base
         await insertBaseUser();
-        
+
         // Actualizar updated_at a NULL
         const result = await updateUser('test@example.com', { updated_at: null });
-        
+
         // Verificar que updated_at es null
         expect(result.rows[0].updated_at).toBeNull();
       });
 
       test('should handle far future dates for updated_at', async () => {
         await insertBaseUser();
-        
+
         // Fecha en el futuro lejano: 31 de diciembre de 9999
         const result = await updateUser('test@example.com', { updated_at: '9999-12-31 23:59:59' });
-        
+
         // Verificar que la fecha se guardó correctamente
         expect(result.rows[0].updated_at).not.toBeNull();
         const storedDate = new Date(result.rows[0].updated_at);
@@ -241,38 +241,38 @@ describe('Test database', () => {
     describe('name fields', () => {
       test('should allow setting first_name and last_name', async () => {
         await insertBaseUser();
-        
-        const result = await updateUser('test@example.com', { 
-          first_name: 'John', 
+
+        const result = await updateUser('test@example.com', {
+          first_name: 'John',
           last_name: 'Doe',
         });
-        
+
         expect(result.rows[0].first_name).toBe('John');
         expect(result.rows[0].last_name).toBe('Doe');
       });
 
       test('should handle long names up to 50 characters', async () => {
         await insertBaseUser();
-        
+
         const longName = 'A'.repeat(50); // Nombre de 50 caracteres
-        const result = await updateUser('test@example.com', { 
-          first_name: longName, 
+        const result = await updateUser('test@example.com', {
+          first_name: longName,
           last_name: longName,
         });
-        
+
         expect(result.rows[0].first_name.length).toBe(50);
         expect(result.rows[0].last_name.length).toBe(50);
       });
 
       test('should handle special characters in names', async () => {
         await insertBaseUser();
-        
-        const specialName = "Tito Puente";
-        const result = await updateUser('test@example.com', { 
-          first_name: specialName, 
+
+        const specialName = 'Tito Puente';
+        const result = await updateUser('test@example.com', {
+          first_name: specialName,
           last_name: specialName,
         });
-        
+
         expect(result.rows[0].first_name).toBe(specialName);
         expect(result.rows[0].last_name).toBe(specialName);
       });
@@ -284,34 +284,34 @@ describe('Test database', () => {
     describe('password field', () => {
       test('should allow setting password', async () => {
         await insertBaseUser();
-        
-        const result = await updateUser('test@example.com', { 
+
+        const result = await updateUser('test@example.com', {
           password: 'securePassword123!',
         });
-        
+
         expect(result.rows[0].password).toBe('securePassword123!');
       });
 
       test('should handle passwords up to 100 characters', async () => {
         await insertBaseUser();
-        
+
         const longPassword = 'P@ssw0rd'.repeat(13).substring(0, 100); // 100 caracteres
-        const result = await updateUser('test@example.com', { 
+        const result = await updateUser('test@example.com', {
           password: longPassword,
         });
-        
+
         expect(result.rows[0].password.length).toBe(100);
         expect(result.rows[0].password).toBe(longPassword);
       });
 
       test('should handle special characters in passwords', async () => {
         await insertBaseUser();
-        
-        const specialPassword = "!@#$-_+.";
-        const result = await updateUser('test@example.com', { 
+
+        const specialPassword = '!@#$-_+.';
+        const result = await updateUser('test@example.com', {
           password: specialPassword,
         });
-        
+
         expect(result.rows[0].password).toBe(specialPassword);
       });
     });
@@ -322,28 +322,28 @@ describe('Test database', () => {
     describe('enabled field', () => {
       test('should default to true when not specified', async () => {
         const result = await insertBaseUser();
-        
+
         // Verificar que enabled es true por defecto
         expect(result.rows[0].enabled).toBe(true);
       });
 
       test('should allow setting enabled to false', async () => {
         await insertBaseUser();
-        
+
         const result = await updateUser('test@example.com', { enabled: false });
-        
+
         expect(result.rows[0].enabled).toBe(false);
       });
 
       test('should allow setting enabled back to true', async () => {
         await insertBaseUser();
-        
+
         // Primero cambiamos a false
         await updateUser('test@example.com', { enabled: false });
-        
+
         // Luego volvemos a true
         const result = await updateUser('test@example.com', { enabled: true });
-        
+
         expect(result.rows[0].enabled).toBe(true);
       });
     });
@@ -354,33 +354,33 @@ describe('Test database', () => {
     describe('last_access_time field', () => {
       test('should allow setting last_access_time', async () => {
         await insertBaseUser();
-        
+
         const nowTimestamp = new Date().toISOString();
-        const result = await updateUser('test@example.com', { 
+        const result = await updateUser('test@example.com', {
           last_access_time: nowTimestamp,
         });
-        
+
         expect(result.rows[0].last_access_time).not.toBeNull();
       });
 
       test('should allow setting last_access_time to NULL', async () => {
         await insertBaseUser();
-        
-        const result = await updateUser('test@example.com', { 
+
+        const result = await updateUser('test@example.com', {
           last_access_time: null,
         });
-        
+
         expect(result.rows[0].last_access_time).toBeNull();
       });
 
       test('should handle far past dates for last_access_time', async () => {
         await insertBaseUser();
-        
+
         // Fecha en el pasado lejano: 1 de enero de 1900
-        const result = await updateUser('test@example.com', { 
+        const result = await updateUser('test@example.com', {
           last_access_time: '1900-01-01 00:00:00',
         });
-        
+
         // Verificar que la fecha se guardó correctamente
         expect(result.rows[0].last_access_time).not.toBeNull();
         const storedDate = new Date(result.rows[0].last_access_time);
@@ -396,9 +396,9 @@ describe('Test database', () => {
     describe('All new fields together', () => {
       test('should handle all new fields together in a single update', async () => {
         await insertBaseUser();
-        
+
         const now = new Date().toISOString();
-        const result = await updateUser('test@example.com', { 
+        const result = await updateUser('test@example.com', {
           updated_at: now,
           first_name: 'John',
           last_name: 'Doe',
@@ -406,7 +406,7 @@ describe('Test database', () => {
           enabled: false,
           last_access_time: now,
         });
-        
+
         expect(result.rows[0].updated_at).not.toBeNull();
         expect(result.rows[0].first_name).toBe('John');
         expect(result.rows[0].last_name).toBe('Doe');
